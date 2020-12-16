@@ -4,30 +4,51 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private float horizontal;
-    private float vertical;
-    public RoofSlot roofslot;
-    public GameObject PauseMenu;
 
-    void Start()
-    {
-        PauseMenu.SetActive(false);
-    }
+    public float speed = 4;
+    public RoofSlot roofslot;
+    public Animator animator;
+    public Rigidbody2D rigidbody2D;
+
+    Vector2 movePos;
     void Update()
     {
-        horizontal = Input.GetAxis("Horizontal") / 10;
-        vertical = Input.GetAxis("Vertical") / 10;
-        if (horizontal != 0 || vertical != 0)
+        movePos.x = Input.GetAxisRaw("Horizontal");
+        movePos.y = Input.GetAxisRaw("Vertical");
+
+        rigidbody2D.MovePosition(rigidbody2D.position + movePos * speed * Time.deltaTime);
+
+        if (movePos.x > 0 || movePos.y > 0)
         {
-            transform.position += new Vector3(horizontal, vertical, 0);
+
+            animator.SetBool("IsMoving", true);
         }
+        else
+        {
+            animator.SetBool("IsMoving", false);
+        }
+
+
         if (Input.GetKeyDown(KeyCode.E))
         {
-            roofslot.Interact();
+            if (roofslot != null)
+            {
+                animator.SetTrigger("Interact");
+
+                roofslot.Interact();
+            }
         }
-        if (Input.GetKey("escape"))
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Interactabels"))
         {
-            PauseMenu.SetActive(true);
+            roofslot = collision.GetComponent<RoofSlot>();
         }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        roofslot = null;
     }
 }
