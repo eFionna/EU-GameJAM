@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     private SpecialRequest SpecialRequest;
     public SpecialRequest currenstSpecialRequest
     {
-        get {return SpecialRequest; }
+        get { return SpecialRequest; }
         set
         {
             if (value != null)
@@ -42,8 +42,8 @@ public class GameManager : MonoBehaviour
             {
                 SpecialRequest = value;
             }
-            ; 
-        } 
+            ;
+        }
     }
     public SpecialRequest[] specialRequests;
 
@@ -68,19 +68,19 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator SpecialRequestTimer()
     {
- 
-            yield return new WaitForSeconds(specialRequstInterval);
-            if (currenstSpecialRequest != null)
+
+        yield return new WaitForSeconds(specialRequstInterval);
+        if (currenstSpecialRequest != null)
+        {
+            currenstSpecialRequest = null;
+        }
+        else
+        {
+            if (Random.Range(0, 10) >= 6)
             {
-                currenstSpecialRequest = null;
+                currenstSpecialRequest = GenerateSpecialRequst();
             }
-            else
-            {
-                if (Random.Range(0, 10) >= 6)
-                {
-                    currenstSpecialRequest = GenerateSpecialRequst();
-                }
-            }
+        }
         StartCoroutine(SpecialRequestTimer());
 
 
