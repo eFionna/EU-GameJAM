@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -25,7 +24,9 @@ public class GameManager : MonoBehaviour
     public int Acceptance
     {
         get { return acceptance; }
-        set { acceptance = value; }
+        set {
+            CheckIfWin();
+            acceptance = value; }
     }
     private SpecialRequest SpecialRequest;
     public SpecialRequest currenstSpecialRequest
@@ -53,7 +54,13 @@ public class GameManager : MonoBehaviour
         StartCoroutine(SpecialRequestTimer());
     }
 
-
+    void CheckIfWin()
+    {
+        if (Acceptance == 100)
+        {
+            //You Win
+        }
+    }
     void CropWasHarvested(CropType cropType)
     {
         if (currenstSpecialRequest != null && cropType == currenstSpecialRequest.cropType)
