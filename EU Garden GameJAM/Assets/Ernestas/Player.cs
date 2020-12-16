@@ -7,7 +7,12 @@ public class Player : MonoBehaviour
     private float horizontal;
     private float vertical;
     public RoofSlot roofslot;
+    public GameObject PauseMenu;
 
+    void Start()
+    {
+        PauseMenu.SetActive(false);
+    }
     void Update()
     {
         horizontal = Input.GetAxis("Horizontal") / 10;
@@ -19,6 +24,10 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             roofslot.Interact();
+        }
+        if (Input.GetKey("escape"))
+        {
+            PauseMenu.SetActive(true);
         }
     }
 }
