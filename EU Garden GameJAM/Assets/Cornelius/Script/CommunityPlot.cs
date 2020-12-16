@@ -7,6 +7,7 @@ public class CommunityPlot : RoofSlot
 
     public int AccseptanceOnBuilt = 25;
     public int FavorsToBuild;
+    public SpriteRenderer renderer;
     public override void Interact()
     {
         Build();
@@ -16,8 +17,7 @@ public class CommunityPlot : RoofSlot
     {
         if (GameManager.Favors >= FavorsToBuild)
         {
-            //Enabel Sprite
-
+            renderer.color = Color.white;
             GameManager.Acceptance += AccseptanceOnBuilt;
         }
     }

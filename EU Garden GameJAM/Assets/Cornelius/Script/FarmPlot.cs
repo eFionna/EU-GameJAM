@@ -9,12 +9,12 @@ public class FarmPlot : RoofSlot
     public float Growth;
     public bool HasCrop;
     public float TimeToMature;
+    public Animator animator;
     float timeToMature;
 
     private void Awake()
     {
         timeToMature = TimeToMature / 100;
-        StartCoroutine(Grow());
     }
 
     public override void Interact()
@@ -23,8 +23,14 @@ public class FarmPlot : RoofSlot
         {
             if (Growth == 100)
             {
-                GameManager.OnHarvest.Invoke(CropType);
                 HasCrop = false;
+
+                GameManager.OnHarvest.Invoke(CropType);
+                Growth = 0;
+                animator.SetFloat("Growth", Growth);
+
+                animator.SetTrigger("Reset");
+                
             }
         }
         else
@@ -44,6 +50,7 @@ public class FarmPlot : RoofSlot
         {
             yield return new WaitForSeconds(timeToMature);
             Growth++;
+            animator.SetFloat("Growth", Growth);
         }
     }
 }
