@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class Menu : MonoBehaviour
 {
-    void Update()
-    {
-        if (Input.GetKey("escape"))
-        {
-            Quit();
-        }
-    }
     public void Quit()
     {
         Application.Quit();

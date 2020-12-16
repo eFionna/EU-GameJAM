@@ -9,6 +9,11 @@ public class Player : MonoBehaviour
     public RoofSlot roofslot;
     public Animator animator;
     public Rigidbody2D rigidbody2D;
+    public GameObject pausemenu;
+    void Start()
+    {
+        pausemenu.SetActive(false);
+    }
 
     Vector2 movePos;
     void Update()
@@ -37,6 +42,10 @@ public class Player : MonoBehaviour
 
                 roofslot.Interact();
             }
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            pausemenu.SetActive(true);
         }
     }
 
