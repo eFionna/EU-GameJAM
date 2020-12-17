@@ -1,14 +1,25 @@
 using System.Collections;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public delegate void Harvest(CropType cropType);
     public static Harvest OnHarvest;
 
-    public delegate void SpecialRequset(SpecialRequest request);
-    public static SpecialRequset OnSpecialRequest;
+    public TextMeshProUGUI favorText;
+    public TextMeshProUGUI acceptanceText;
+    public TextMeshProUGUI currentRequestText;
 
+    public GameObject Camera;
+
+    public Transform StartCpos;
+    public Transform FinalCpos;
+
+    public GameObject IngameUI;
+    public GameObject MainMenu;
+    public GameObject PausMenu;
+    public GameObject victoryScreen;
 
     public int favorOnHarvest = 10;
     public float specialRequstInterval = 180;
@@ -18,15 +29,22 @@ public class GameManager : MonoBehaviour
     public int Favors
     {
         get { return favors; }
-        set { favors = value; }
+        set
+        {
+            favors = value;
+            favorText.text = $"Favor: {Favors}";
+        }
     }
     private int acceptance;
     public int Acceptance
     {
         get { return acceptance; }
-        set {
+        set
+        {
             CheckIfWin();
-            acceptance = value; }
+            acceptance = value;
+            acceptanceText.text = $"Acceptance : {Acceptance}";
+        }
     }
     private SpecialRequest SpecialRequest;
     public SpecialRequest currenstSpecialRequest
@@ -37,28 +55,72 @@ public class GameManager : MonoBehaviour
             if (value != null)
             {
                 SpecialRequest = value;
-                OnSpecialRequest.Invoke(value);
+                currentRequestText.text = $"Special Request For {currenstSpecialRequest.cropType}";
             }
             else
             {
-                SpecialRequest = value;
+                SpecialRequest = null;
+                currentRequestText.text = string.Empty;
             }
             ;
         }
     }
     public SpecialRequest[] specialRequests;
-
+    bool isPaused;
     private void Awake()
     {
         OnHarvest += CropWasHarvested;
-        StartCoroutine(SpecialRequestTimer());
+        //currenstSpecialRequest = GenerateSpecialRequst();
+        Acceptance = 0;
+        Favors = 0;
     }
+    public void StartGame()
+    {
+        StartCoroutine(StartSequens());
+    }
+    public void PausGame()
+    {
+        if (isPaused)
+        {
+            PausMenu.SetActive(false);
+            isPaused = !isPaused;
+            Time.timeScale = 1;
+        }
+        else
+        {
+            PausMenu.SetActive(true);
+            isPaused = !isPaused;
+            Time.timeScale = 0;
+        }
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+    public int interpolationFramesCount; // Number of frames to completely interpolate between the 2 positions
+    int elapsedFrames = 0;
+    IEnumerator StartSequens()
+    {
+        MainMenu.SetActive(false);
+        while (Camera.transform.position != FinalCpos.position)
+        {
 
+            float interpolationRatio = (float)elapsedFrames / interpolationFramesCount;
+            Camera.transform.position = Vector3.Lerp(StartCpos.position, FinalCpos.position, interpolationRatio);
+            elapsedFrames = (elapsedFrames + 1) % (interpolationFramesCount + 1);  // reset elapsedFrames to zero after it reached (interpolationFramesCount + 1)
+            yield return null;
+        }
+
+        IngameUI.SetActive(true);
+        StartCoroutine(SpecialRequestTimer());
+
+    }
     void CheckIfWin()
     {
         if (Acceptance == 100)
         {
-            //You Win
+            victoryScreen.SetActive(true);
+            Time.timeScale = 0;
         }
     }
     void CropWasHarvested(CropType cropType)
@@ -66,6 +128,7 @@ public class GameManager : MonoBehaviour
         if (currenstSpecialRequest != null && cropType == currenstSpecialRequest.cropType)
         {
             Favors += favorOnHarvest + currenstSpecialRequest.bonusFavor;
+            currentRequestText.text = string.Empty;
         }
         else
         {
@@ -83,7 +146,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (Random.Range(0, 10) >= 6)
+            if (Random.Range(0, 10) >= 2)
             {
                 currenstSpecialRequest = GenerateSpecialRequst();
             }

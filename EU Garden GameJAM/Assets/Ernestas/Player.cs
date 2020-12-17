@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public GameManager gameManager;
 
     public float speed = 4;
     public RoofSlot roofslot;
@@ -16,9 +17,9 @@ public class Player : MonoBehaviour
         movePos.x = Input.GetAxisRaw("Horizontal");
         movePos.y = Input.GetAxisRaw("Vertical");
 
-        rigidbody2D.MovePosition(rigidbody2D.position + movePos * speed * Time.deltaTime);
+        rigidbody2D.MovePosition(rigidbody2D.position + movePos * speed * Time.fixedDeltaTime);
 
-        if (movePos.x > 0 || movePos.y > 0)
+        if (movePos.x != 0 || movePos.y != 0)
         {
 
             animator.SetBool("IsMoving", true);
@@ -27,7 +28,10 @@ public class Player : MonoBehaviour
         {
             animator.SetBool("IsMoving", false);
         }
-
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            gameManager.PausGame();
+        }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -40,7 +44,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Interactabels"))
         {

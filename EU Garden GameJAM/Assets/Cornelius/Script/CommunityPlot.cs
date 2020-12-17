@@ -7,18 +7,27 @@ public class CommunityPlot : RoofSlot
 
     public int AccseptanceOnBuilt = 25;
     public int FavorsToBuild;
-    public SpriteRenderer renderer;
+    public SpriteRenderer SpriteRenderer;
+    public GameObject worldCanvas;
+    bool isBuilt;
     public override void Interact()
     {
-        Build();
+        if (!isBuilt)
+        {
+
+            Build();
+        }
     }
 
     void Build()
     {
         if (GameManager.Favors >= FavorsToBuild)
         {
-            renderer.color = Color.white;
+            SpriteRenderer.color = Color.white;
+            worldCanvas.SetActive(false);
             GameManager.Acceptance += AccseptanceOnBuilt;
+            GameManager.Favors -= FavorsToBuild;
+            isBuilt = true;
         }
     }
 }
